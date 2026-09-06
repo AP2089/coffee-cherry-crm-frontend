@@ -101,6 +101,10 @@ useCrmInfiniteScroll({
   itemsLength: () => orders.items.length,
 })
 
+useCrmAutoRefresh(() => orders.refreshOrders(), {
+  canRefresh: () => orders.initialized && !orders.loading && !orders.loadingMore && !orders.saving,
+})
+
 function statusLabel(status: OrderStatus) {
   return orderStatusLabels[status]
 }

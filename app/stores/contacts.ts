@@ -24,21 +24,31 @@ export const useContactsStore = defineStore('contacts', {
       return { Authorization: `Bearer ${auth.token}` }
     },
 
-    async fetchContacts(options?: { append?: boolean }) {
+    async fetchContacts(options?: { append?: boolean; silent?: boolean }) {
       const append = options?.append ?? false
+      const silent = options?.silent ?? false
 
-      if (append) {
-        this.loadingMore = true
-      } else {
-        this.loading = true
+      if (silent && (this.loading || this.loadingMore || this.actionLoading || append)) {
+        return
       }
 
-      this.error = null
+      if (!silent) {
+        if (append) {
+          this.loadingMore = true
+        } else {
+          this.loading = true
+        }
+        this.error = null
+      }
 
       try {
+        const limit = silent
+          ? Math.max(CRM_PAGE_SIZE, this.items.length || CRM_PAGE_SIZE)
+          : CRM_PAGE_SIZE
+
         const response = await apiGetContacts(
           {
-            limit: CRM_PAGE_SIZE,
+            limit,
             offset: append ? this.items.length : 0,
             ...(this.statusFilter !== 'all' ? { status: this.statusFilter } : {}),
           },
@@ -53,20 +63,27 @@ export const useContactsStore = defineStore('contacts', {
         this.total = response.data.total
         this.hasMore = response.data.hasMore
       } catch (error) {
-        this.error = error instanceof Error ? error.message : 'Не удалось загрузить обращения'
-        if (!append) {
-          this.items = []
+        if (!silent) {
+          this.error = error instanceof Error ? error.message : 'Не удалось загрузить обращения'
+          if (!append) {
+            this.items = []
+          }
         }
       } finally {
-        if (append) {
-          this.loadingMore = false
-        } else {
-          this.loading = false
-          this.initialized = true
+        if (!silent) {
+          if (append) {
+            this.loadingMore = false
+          } else {
+            this.loading = false
+            this.initialized = true
+          }
         }
       }
     },
 
+    async refreshContacts() {
+      await this.fetchContacts({ silent: true })
+    },
     async loadMoreContacts() {
       if (!this.hasMore || this.loading || this.loadingMore) return
       await this.fetchContacts({ append: true })
