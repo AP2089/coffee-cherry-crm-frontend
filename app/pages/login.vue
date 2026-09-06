@@ -97,7 +97,7 @@ const errorMessage = computed(() => {
 const onSubmit = handleSubmit(async (values) => {
   try {
     await auth.login(values.username, values.password)
-    await navigateTo('/products')
+    await navigateTo('/orders')
   } catch {
     // error in store
   }

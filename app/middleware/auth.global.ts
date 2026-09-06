@@ -10,7 +10,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
     }
 
     if (auth.isAuthenticated) {
-      return navigateTo('/products')
+      return navigateTo('/orders')
     }
 
     return

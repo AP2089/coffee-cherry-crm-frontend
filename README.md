@@ -1,47 +1,17 @@
 # Coffee Cherry CRM
 
-Админ-панель для управления товарами, заказами и контактами.
-
-**Стек:** Nuxt 3, Vue 3, Pinia, Tailwind CSS
-
-## Требования
-
-- Node.js >= 20
-- Запущенный [backend](../backend) на порту `3001`
-
-## Запуск
-
-```bash
-npm install
-npm run dev
-```
-
-Приложение: http://localhost:3003
-
-### Docker
-
-Сначала запустите backend, затем:
-
-```bash
-docker compose up -d --build
-```
-
 ## Переменные окружения
 
-Файл `.env` в корне проекта.
+- `NUXT_API_URL` — URL API для SSR.
+- `NUXT_PUBLIC_API_URL` — URL API для браузера.
+- `NUXT_PUBLIC_HELPDESK_URL` — URL панели Helpdesk.
 
-| Переменная     | Описание                                     |
-| -------------- | -------------------------------------------- |
-| `PORT`         | Порт приложения                              |
-| `NODE_ENV`     | Режим работы: `development` или `production` |
-| `API_URL`      | URL REST API для браузера и SSR              |
-| `HELPDESK_URL` | URL панели helpdesk                          |
+## Scripts
 
-## Скрипты
-
-| Команда           | Описание               |
-| ----------------- | ---------------------- |
-| `npm run dev`     | Dev-сервер (порт 3003) |
-| `npm run build`   | Production-сборка      |
-| `npm run preview` | Просмотр сборки        |
-| `npm run lint`    | ESLint                 |
+- `npm run dev` — dev-сервер на порту `3003`.
+- `npm run build` — production-сборка.
+- `npm run preview` — просмотр сборки.
+- `npm run typecheck` — проверка TypeScript.
+- `npm run lint` / `npm run lint:fix` — ESLint.
+- `npm run format` / `npm run format:check` — Prettier.
+- `npm test` / `npm run test:watch` — тесты.
