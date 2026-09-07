@@ -35,13 +35,12 @@
 </template>
 
 <script setup lang="ts">
-import { Inbox, Package, ShoppingBag, MessageSquare } from 'lucide-vue-next'
+import { Inbox, ShoppingBag, MessageSquare } from 'lucide-vue-next'
 
 const config = useRuntimeConfig()
 const helpdeskUrl = String(config.public.helpdeskUrl)
 
 const navItems = [
-  { to: '/products', label: 'Товары', icon: Package },
   { to: '/orders', label: 'Заказы', icon: ShoppingBag },
   { to: '/contacts', label: 'Сообщения', icon: Inbox },
 ]

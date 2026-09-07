@@ -155,6 +155,11 @@ useCrmInfiniteScroll({
   itemsLength: () => contacts.items.length,
 })
 
+useCrmAutoRefresh(() => contacts.refreshContacts(), {
+  canRefresh: () =>
+    contacts.initialized && !contacts.loading && !contacts.loadingMore && !contacts.actionLoading,
+})
+
 function statusLabel(status: ContactMessageStatus) {
   return contactStatusLabels[status]
 }

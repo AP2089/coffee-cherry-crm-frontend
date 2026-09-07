@@ -26,21 +26,31 @@ export const useOrdersStore = defineStore('orders', {
       return { Authorization: `Bearer ${auth.token}` }
     },
 
-    async fetchOrders(options?: { append?: boolean }) {
+    async fetchOrders(options?: { append?: boolean; silent?: boolean }) {
       const append = options?.append ?? false
+      const silent = options?.silent ?? false
 
-      if (append) {
-        this.loadingMore = true
-      } else {
-        this.loading = true
+      if (silent && (this.loading || this.loadingMore || this.saving || append)) {
+        return
       }
 
-      this.error = null
+      if (!silent) {
+        if (append) {
+          this.loadingMore = true
+        } else {
+          this.loading = true
+        }
+        this.error = null
+      }
 
       try {
+        const limit = silent
+          ? Math.max(CRM_PAGE_SIZE, this.items.length || CRM_PAGE_SIZE)
+          : CRM_PAGE_SIZE
+
         const response = await apiGetOrders(
           {
-            limit: CRM_PAGE_SIZE,
+            limit,
             offset: append ? this.items.length : 0,
             ...(this.statusFilter !== 'all' ? { status: this.statusFilter } : {}),
           },
@@ -55,20 +65,27 @@ export const useOrdersStore = defineStore('orders', {
         this.total = response.data.total
         this.hasMore = response.data.hasMore
       } catch (error) {
-        this.error = error instanceof Error ? error.message : 'Не удалось загрузить заказы'
-        if (!append) {
-          this.items = []
+        if (!silent) {
+          this.error = error instanceof Error ? error.message : 'Не удалось загрузить заказы'
+          if (!append) {
+            this.items = []
+          }
         }
       } finally {
-        if (append) {
-          this.loadingMore = false
-        } else {
-          this.loading = false
-          this.initialized = true
+        if (!silent) {
+          if (append) {
+            this.loadingMore = false
+          } else {
+            this.loading = false
+            this.initialized = true
+          }
         }
       }
     },
 
+    async refreshOrders() {
+      await this.fetchOrders({ silent: true })
+    },
     async loadMoreOrders() {
       if (!this.hasMore || this.loading || this.loadingMore) return
       await this.fetchOrders({ append: true })

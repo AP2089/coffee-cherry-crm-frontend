@@ -3,5 +3,5 @@ definePageMeta({
   ssr: false,
 })
 
-await navigateTo('/products', { replace: true })
+await navigateTo('/orders', { replace: true })
 </script>

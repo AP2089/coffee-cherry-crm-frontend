@@ -17,19 +17,10 @@ export function useApiBase(): string {
   const config = useRuntimeConfig()
 
   if (import.meta.client) {
-    return resolveLocalBackendUrl(String(config.public.apiUrl), '3001')
+    return resolveLocalBackendUrl(String(config.public.apiUrl), '3012')
   }
 
   return String(config.apiUrl).replace(/\/$/, '')
-}
-
-export function useSocketUrl(): string {
-  const config = useRuntimeConfig()
-  const configured = String(config.public.socketUrl || 'http://127.0.0.1:3001')
-
-  if (!import.meta.client) return configured.replace(/\/$/, '')
-
-  return resolveLocalBackendUrl(configured, '3001')
 }
 
 const AUTH_TOKEN_KEY = 'coffee-cherry-crm-token'
