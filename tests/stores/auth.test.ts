@@ -18,6 +18,7 @@ vi.mock('~/composables/useApiBase', () => ({
   getAuthToken: vi.fn(() => null),
   saveAuthToken,
   clearAuthToken,
+  migrateAuthTokenFromLocalStorage: vi.fn(),
 }))
 
 vi.mock('~/api/auth', () => ({

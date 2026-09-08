@@ -1,7 +1,5 @@
 <template>
   <NuxtLayout name="app">
-    <LayoutAppHeader title="Сообщения" subtitle="Обращения из формы на сайте" />
-
     <div ref="listEl" class="flex-1 overflow-y-auto p-4 md:p-6">
       <div class="mb-4 flex flex-wrap gap-2">
         <Button
