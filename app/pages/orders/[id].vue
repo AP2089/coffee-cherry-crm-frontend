@@ -1,7 +1,5 @@
 <template>
   <NuxtLayout name="app">
-    <LayoutAppHeader title="Заказ" subtitle="Детали и смена статуса" />
-
     <div class="flex-1 overflow-y-auto p-4 md:p-6">
       <div v-if="orders.detailLoading" class="space-y-4">
         <Skeleton class="h-10 w-40" />
