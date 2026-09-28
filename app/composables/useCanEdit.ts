@@ -14,7 +14,6 @@ export function useCanEdit() {
 
   const canEdit = computed(() => !isGuestAccount(auth.user))
 
-  /** Показывает toast и возвращает false для гостя. */
   function assertCanEdit(): boolean {
     if (canEdit.value) return true
     toast.show(GUEST_EDIT_DENIED_MESSAGE)
@@ -27,7 +26,6 @@ export function useCanEdit() {
   }
 }
 
-/** Для вызова из Pinia actions. */
 export function assertGuestCanEdit(): boolean {
   const auth = useAuthStore()
 

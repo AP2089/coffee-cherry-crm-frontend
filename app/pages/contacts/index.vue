@@ -1,3 +1,67 @@
+<script setup lang="ts">
+import type { ContactMessageStatus } from '~/types/crm'
+import { contactStatusLabels, formatDate } from '~/utils/format'
+
+definePageMeta({
+  layout: false,
+  ssr: false,
+})
+
+const contacts = useContactsStore()
+const listEl = ref<HTMLElement | null>(null)
+const { canEdit, assertCanEdit } = useCanEdit()
+
+const statusFilters = [
+  { value: 'all' as const, label: 'Все' },
+  { value: 'new' as const, label: 'Новые' },
+  { value: 'read' as const, label: 'Прочитанные' },
+  { value: 'archived' as const, label: 'Архив' },
+]
+
+useCrmInfiniteScroll({
+  listEl,
+  hasMore: () => contacts.hasMore,
+  loading: () => contacts.loading,
+  loadingMore: () => contacts.loadingMore,
+  loadMore: () => contacts.loadMoreContacts(),
+  itemsLength: () => contacts.items.length,
+})
+
+useCrmAutoRefresh(() => contacts.refreshContacts(), {
+  canRefresh: () =>
+    contacts.initialized && !contacts.loading && !contacts.loadingMore && !contacts.actionLoading,
+})
+
+function statusLabel(status: ContactMessageStatus) {
+  return contactStatusLabels[status]
+}
+
+function statusVariant(status: ContactMessageStatus) {
+  if (status === 'new') return 'unread'
+  if (status === 'archived') return 'secondary'
+  return 'status'
+}
+
+async function setFilter(value: ContactMessageStatus | 'all') {
+  contacts.setStatusFilter(value)
+  await contacts.fetchContacts()
+}
+
+function onUpdateStatus(id: string, status: ContactMessageStatus) {
+  if (!assertCanEdit()) return
+  void contacts.updateStatus(id, status)
+}
+
+function onDeleteContact(id: string) {
+  if (!assertCanEdit()) return
+  void contacts.deleteContact(id)
+}
+
+onMounted(async () => {
+  await contacts.fetchContacts()
+})
+</script>
+
 <template>
   <NuxtLayout name="app">
     <div ref="listEl" class="flex-1 overflow-y-auto p-4 md:p-6">
@@ -123,67 +187,3 @@
     </div>
   </NuxtLayout>
 </template>
-
-<script setup lang="ts">
-import type { ContactMessageStatus } from '~/types/crm'
-import { contactStatusLabels, formatDate } from '~/utils/format'
-
-definePageMeta({
-  layout: false,
-  ssr: false,
-})
-
-const contacts = useContactsStore()
-const listEl = ref<HTMLElement | null>(null)
-const { canEdit, assertCanEdit } = useCanEdit()
-
-const statusFilters = [
-  { value: 'all' as const, label: 'Все' },
-  { value: 'new' as const, label: 'Новые' },
-  { value: 'read' as const, label: 'Прочитанные' },
-  { value: 'archived' as const, label: 'Архив' },
-]
-
-useCrmInfiniteScroll({
-  listEl,
-  hasMore: () => contacts.hasMore,
-  loading: () => contacts.loading,
-  loadingMore: () => contacts.loadingMore,
-  loadMore: () => contacts.loadMoreContacts(),
-  itemsLength: () => contacts.items.length,
-})
-
-useCrmAutoRefresh(() => contacts.refreshContacts(), {
-  canRefresh: () =>
-    contacts.initialized && !contacts.loading && !contacts.loadingMore && !contacts.actionLoading,
-})
-
-function statusLabel(status: ContactMessageStatus) {
-  return contactStatusLabels[status]
-}
-
-function statusVariant(status: ContactMessageStatus) {
-  if (status === 'new') return 'unread'
-  if (status === 'archived') return 'secondary'
-  return 'status'
-}
-
-async function setFilter(value: ContactMessageStatus | 'all') {
-  contacts.setStatusFilter(value)
-  await contacts.fetchContacts()
-}
-
-function onUpdateStatus(id: string, status: ContactMessageStatus) {
-  if (!assertCanEdit()) return
-  void contacts.updateStatus(id, status)
-}
-
-function onDeleteContact(id: string) {
-  if (!assertCanEdit()) return
-  void contacts.deleteContact(id)
-}
-
-onMounted(async () => {
-  await contacts.fetchContacts()
-})
-</script>

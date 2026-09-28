@@ -1,3 +1,7 @@
+<script setup lang="ts">
+const auth = useAuthStore()
+</script>
+
 <template>
   <div v-if="!auth.ready" class="h-dvh bg-background" aria-hidden="true" />
   <template v-else>
@@ -7,7 +11,3 @@
     <Toaster />
   </template>
 </template>
-
-<script setup lang="ts">
-const auth = useAuthStore()
-</script>

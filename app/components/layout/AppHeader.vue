@@ -1,3 +1,22 @@
+<script setup lang="ts">
+import { Menu } from '@lucide/vue'
+import { UserRole } from '~/types/auth'
+
+const auth = useAuthStore()
+const mobileNav = useMobileNav()
+
+const roleLabel = computed(() => {
+  if (auth.user?.role === UserRole.Admin) return 'Администратор'
+  if (auth.isGuest) return 'Гость'
+  return 'Оператор'
+})
+
+async function onLogout() {
+  auth.logout()
+  await navigateTo('/login')
+}
+</script>
+
 <template>
   <header
     class="flex shrink-0 items-center justify-between gap-3 border-b border-border bg-background px-4 py-3 md:gap-4 md:px-6"
@@ -31,22 +50,3 @@
     </div>
   </header>
 </template>
-
-<script setup lang="ts">
-import { Menu } from 'lucide-vue-next'
-import { UserRole } from '~/types/auth'
-
-const auth = useAuthStore()
-const mobileNav = useMobileNav()
-
-const roleLabel = computed(() => {
-  if (auth.user?.role === UserRole.Admin) return 'Администратор'
-  if (auth.isGuest) return 'Гость'
-  return 'Оператор'
-})
-
-async function onLogout() {
-  auth.logout()
-  await navigateTo('/login')
-}
-</script>

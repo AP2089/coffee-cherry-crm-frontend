@@ -1,3 +1,7 @@
+<script setup lang="ts">
+const { toasts } = useToast()
+</script>
+
 <template>
   <div
     class="pointer-events-none fixed top-4 left-1/2 z-50 flex w-[calc(100%-2rem)] max-w-md -translate-x-1/2 flex-col gap-2"
@@ -22,7 +26,3 @@
     </TransitionGroup>
   </div>
 </template>
-
-<script setup lang="ts">
-const { toasts } = useToast()
-</script>

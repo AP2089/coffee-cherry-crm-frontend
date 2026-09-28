@@ -2,7 +2,7 @@
 import type { DialogContentEmits, DialogContentProps } from 'reka-ui'
 import type { HTMLAttributes } from 'vue'
 import { reactiveOmit } from '@vueuse/core'
-import { X } from 'lucide-vue-next'
+import { X } from '@lucide/vue'
 import {
   DialogClose,
   DialogContent,
@@ -10,10 +10,16 @@ import {
   DialogPortal,
   useForwardPropsEmits,
 } from 'reka-ui'
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils/cn'
 
-const props = defineProps<DialogContentProps & { class?: HTMLAttributes['class'] }>()
-const emits = defineEmits<DialogContentEmits>()
+interface IProps extends DialogContentProps {
+  class?: HTMLAttributes['class']
+}
+
+const props = defineProps<IProps>()
+type IEmits = DialogContentEmits
+
+const emits = defineEmits<IEmits>()
 
 const delegatedProps = reactiveOmit(props, 'class')
 

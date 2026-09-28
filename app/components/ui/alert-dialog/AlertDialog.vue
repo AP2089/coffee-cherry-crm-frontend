@@ -2,8 +2,12 @@
 import type { AlertDialogEmits, AlertDialogProps } from 'reka-ui'
 import { AlertDialogRoot, useForwardPropsEmits } from 'reka-ui'
 
-const props = defineProps<AlertDialogProps>()
-const emits = defineEmits<AlertDialogEmits>()
+type IProps = AlertDialogProps
+
+const props = defineProps<IProps>()
+type IEmits = AlertDialogEmits
+
+const emits = defineEmits<IEmits>()
 
 const forwarded = useForwardPropsEmits(props, emits)
 </script>

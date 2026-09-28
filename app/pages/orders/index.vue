@@ -1,3 +1,51 @@
+<script setup lang="ts">
+import type { OrderStatus } from '~/types/crm'
+import { formatDate, formatPrice, orderStatusLabels } from '~/utils/format'
+
+definePageMeta({
+  layout: false,
+  ssr: false,
+})
+
+const orders = useOrdersStore()
+const listEl = ref<HTMLElement | null>(null)
+
+const statusFilters = [
+  { value: 'all' as const, label: 'Все' },
+  { value: 'pending' as const, label: 'Ожидают' },
+  { value: 'confirmed' as const, label: 'Подтверждённые' },
+  { value: 'shipped' as const, label: 'Отправленные' },
+  { value: 'delivered' as const, label: 'Доставленные' },
+  { value: 'cancelled' as const, label: 'Отменённые' },
+]
+
+useCrmInfiniteScroll({
+  listEl,
+  hasMore: () => orders.hasMore,
+  loading: () => orders.loading,
+  loadingMore: () => orders.loadingMore,
+  loadMore: () => orders.loadMoreOrders(),
+  itemsLength: () => orders.items.length,
+})
+
+useCrmAutoRefresh(() => orders.refreshOrders(), {
+  canRefresh: () => orders.initialized && !orders.loading && !orders.loadingMore && !orders.saving,
+})
+
+function statusLabel(status: OrderStatus) {
+  return orderStatusLabels[status]
+}
+
+async function setFilter(value: OrderStatus | 'all') {
+  orders.setStatusFilter(value)
+  await orders.fetchOrders()
+}
+
+onMounted(async () => {
+  await orders.fetchOrders()
+})
+</script>
+
 <template>
   <NuxtLayout name="app">
     <div ref="listEl" class="flex-1 overflow-y-auto p-4 md:p-6">
@@ -68,51 +116,3 @@
     </div>
   </NuxtLayout>
 </template>
-
-<script setup lang="ts">
-import type { OrderStatus } from '~/types/crm'
-import { formatDate, formatPrice, orderStatusLabels } from '~/utils/format'
-
-definePageMeta({
-  layout: false,
-  ssr: false,
-})
-
-const orders = useOrdersStore()
-const listEl = ref<HTMLElement | null>(null)
-
-const statusFilters = [
-  { value: 'all' as const, label: 'Все' },
-  { value: 'pending' as const, label: 'Ожидают' },
-  { value: 'confirmed' as const, label: 'Подтверждённые' },
-  { value: 'shipped' as const, label: 'Отправленные' },
-  { value: 'delivered' as const, label: 'Доставленные' },
-  { value: 'cancelled' as const, label: 'Отменённые' },
-]
-
-useCrmInfiniteScroll({
-  listEl,
-  hasMore: () => orders.hasMore,
-  loading: () => orders.loading,
-  loadingMore: () => orders.loadingMore,
-  loadMore: () => orders.loadMoreOrders(),
-  itemsLength: () => orders.items.length,
-})
-
-useCrmAutoRefresh(() => orders.refreshOrders(), {
-  canRefresh: () => orders.initialized && !orders.loading && !orders.loadingMore && !orders.saving,
-})
-
-function statusLabel(status: OrderStatus) {
-  return orderStatusLabels[status]
-}
-
-async function setFilter(value: OrderStatus | 'all') {
-  orders.setStatusFilter(value)
-  await orders.fetchOrders()
-}
-
-onMounted(async () => {
-  await orders.fetchOrders()
-})
-</script>

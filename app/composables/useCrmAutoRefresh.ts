@@ -4,7 +4,6 @@ const DEFAULT_INTERVAL_MS = 10_000
 
 interface CrmAutoRefreshOptions {
   interval?: number
-  /** Skip tick when busy (loading / mutations). */
   canRefresh?: () => boolean
 }
 

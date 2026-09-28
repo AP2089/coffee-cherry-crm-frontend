@@ -1,3 +1,12 @@
+<script setup lang="ts">
+import { Inbox, ShoppingBag } from '@lucide/vue'
+
+const navItems = [
+  { to: '/orders', label: 'Заказы', icon: ShoppingBag },
+  { to: '/contacts', label: 'Сообщения', icon: Inbox },
+]
+</script>
+
 <template>
   <aside
     class="flex h-full w-full flex-col border-r border-border bg-sidebar text-sidebar-foreground md:w-56 lg:w-64"
@@ -16,12 +25,3 @@
     </nav>
   </aside>
 </template>
-
-<script setup lang="ts">
-import { Inbox, ShoppingBag } from 'lucide-vue-next'
-
-const navItems = [
-  { to: '/orders', label: 'Заказы', icon: ShoppingBag },
-  { to: '/contacts', label: 'Сообщения', icon: Inbox },
-]
-</script>

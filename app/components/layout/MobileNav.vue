@@ -1,3 +1,34 @@
+<script setup lang="ts">
+const open = defineModel<boolean>('open', { default: false })
+
+function close() {
+  open.value = false
+}
+
+const route = useRoute()
+
+watch(
+  () => route.fullPath,
+  () => {
+    open.value = false
+  },
+)
+
+const isLocked = useScrollLock(() => (import.meta.client ? document.body : null))
+
+watch(
+  open,
+  (value) => {
+    isLocked.value = value
+  },
+  { immediate: true },
+)
+
+useEventListener('keydown', (event: KeyboardEvent) => {
+  if (event.key === 'Escape') close()
+})
+</script>
+
 <template>
   <Teleport to="body">
     <div
@@ -21,36 +52,3 @@
     </div>
   </Teleport>
 </template>
-
-<script setup lang="ts">
-const open = defineModel<boolean>('open', { default: false })
-
-function close() {
-  open.value = false
-}
-
-const route = useRoute()
-
-watch(
-  () => route.fullPath,
-  () => {
-    open.value = false
-  },
-)
-
-watch(open, (isOpen) => {
-  if (!import.meta.client) return
-  document.body.style.overflow = isOpen ? 'hidden' : ''
-})
-
-onMounted(() => {
-  const onKeydown = (event: KeyboardEvent) => {
-    if (event.key === 'Escape') close()
-  }
-  window.addEventListener('keydown', onKeydown)
-  onBeforeUnmount(() => {
-    window.removeEventListener('keydown', onKeydown)
-    document.body.style.overflow = ''
-  })
-})
-</script>

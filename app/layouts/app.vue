@@ -1,3 +1,16 @@
+<script setup lang="ts">
+const menuOpen = ref(false)
+
+provide(mobileNavKey, {
+  open: () => {
+    menuOpen.value = true
+  },
+  close: () => {
+    menuOpen.value = false
+  },
+})
+</script>
+
 <template>
   <div class="flex h-dvh flex-col overflow-hidden bg-background text-foreground">
     <LayoutAppHeader />
@@ -15,16 +28,3 @@
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-const menuOpen = ref(false)
-
-provide(mobileNavKey, {
-  open: () => {
-    menuOpen.value = true
-  },
-  close: () => {
-    menuOpen.value = false
-  },
-})
-</script>
